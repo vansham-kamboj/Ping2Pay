@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ping2Pay | WhatsApp-Native Crypto Payments</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* --- 1. CORE VARIABLES --- */
+        :root {
+            --midnight-navy: #0A122A;
+            --ping-blue: #1E4FFF;
+            --soft-white: #FFFFFF;
+            --signal-green: #22E584;
+            --electric-cyan: #3EDBFF;
+            
+            --font-head: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            
+            --border-thick: 2px;
+            --shadow-depth: 5px;
+            
+            /* Premium Smooth Easing */
+            --ease-butter: cubic-bezier(0.23, 1, 0.32, 1); 
+            
+            --container-max: 1200px;
+        }
+
+        /* --- 2. RESET & BASE --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background-color: var(--midnight-navy);
+            color: var(--soft-white);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+            position: relative;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Moving Gradient Background */
+        .bg-fixed {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        
+        .bg-blob {
+            position: fixed; top: 50%; left: 50%; width: 80vw; height: 80vw;
+            background: radial-gradient(circle, rgba(30, 79, 255, 0.15) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+            z-index: -2;
+            animation: pulseBg 10s infinite alternate;
+        }
+
+        @keyframes pulseBg { 0% { opacity: 0.5; transform: translate(-50%, -50%) scale(0.8); } 100% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); } }
+
+        h1, h2, h3, h4 { font-family: var(--font-head); line-height: 1.1; letter-spacing: -0.02em; }
+        p { line-height: 1.6; opacity: 0.8; }
+        a { text-decoration: none; color: inherit; cursor: pointer; }
+
+        /* --- 3. UTILITIES --- */
+        .container {
+            width: 100%;
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 24px;
+            position: relative;
+        }
+
+        .highlight { position: relative; display: inline-block; z-index: 1; }
+        .highlight::after {
+            content: ''; position: absolute; bottom: 5px; left: -5px; right: -5px; height: 12px;
+            background: var(--ping-blue); z-index: -1; transform: skew(-10deg); opacity: 0.8;
+        }
+
+        .text-green { color: var(--signal-green); }
+        .text-cyan { color: var(--electric-cyan); }
+
+        /* --- 4. COMPONENTS --- */
+        
+        /* Interactive Buttons */
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 14px 32px;
+            background: var(--ping-blue); color: var(--soft-white);
+            font-family: var(--font-head); font-weight: 700; font-size: 1rem;
+            text-transform: uppercase; letter-spacing: 0.05em;
+            border: var(--border-thick) solid var(--soft-white);
+            border-radius: 8px;
+            box-shadow: 6px 6px 0px var(--soft-white); 
+            transition: all 0.4s var(--ease-butter);
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .btn:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px var(--soft-white);
+            background: var(--electric-cyan);
+            color: var(--midnight-navy);
+            border-color: var(--midnight-navy);
+        }
+        .btn:active { transform: translate(6px, 6px); box-shadow: none; }
+
+        /* Input Fields */
+        .input-brutal {
+            width: 100%; padding: 16px;
+            background: var(--midnight-navy);
+            border: var(--border-thick) solid var(--soft-white);
+            border-radius: 8px; color: var(--soft-white);
+            font-family: var(--font-body); font-weight: 500; outline: none;
+            box-shadow: 4px 4px 0px rgba(255,255,255,0.2); 
+            transition: 0.3s var(--ease-butter);
+        }
+        .input-brutal:focus { border-color: var(--electric-cyan); box-shadow: 4px 4px 0px var(--electric-cyan); }
+
+        /* --- 5. NAVBAR --- */
+        nav {
+            position: fixed; top: 20px; left: 0; width: 100%;
+            z-index: 1000; pointer-events: none;
+            padding: 0 20px;
+        }
+        
+        .nav-inner {
+            max-width: 600px; margin: 0 auto;
+            background: rgba(10, 18, 42, 0.95); backdrop-filter: blur(10px);
+            border: 2px solid var(--soft-white); border-radius: 12px;
+            padding: 10px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            pointer-events: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .logo { font-family: var(--font-head); font-weight: 800; font-size: 1.2rem; display: flex; align-items: center; gap: 10px; }
+        .logo-box { width: 20px; height: 20px; background: var(--electric-cyan); border: 2px solid var(--soft-white); box-shadow: 2px 2px 0px var(--ping-blue); border-radius: 4px; }
+
+        /* --- 6. HERO SECTION --- */
+        .hero-section {
+            padding-top: 140px;
+            padding-bottom: 60px; /* Reduced bottom padding */
+            /* Removed min-height 100vh to fit PC better */
+            display: flex; align-items: center;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr 320px 1fr; /* PC Layout */
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .hero-col h1 { font-size: clamp(3rem, 4vw, 4.5rem); font-weight: 800; margin-bottom: 1rem; }
+        .hero-col p { font-size: 1.1rem; margin-bottom: 2rem; }
+
+        .hero-left { text-align: right; }
+        .hero-right { text-align: left; }
+        
+        /* Center Phone Container */
+        .hero-center {
+            position: relative;
+            display: flex; flex-direction: column; align-items: center;
+            gap: 2rem;
+        }
+
+        /* Floating Coins - INSIDE CENTER CONTAINER */
+        .float-coin {
+            position: absolute;
+            width: 60px; height: 60px;
+            background: var(--signal-green);
+            border: 3px solid var(--midnight-navy);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-family: var(--font-head); font-weight: 800; font-size: 1.5rem;
+            color: var(--midnight-navy);
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.3);
+            z-index: 10;
+            animation: float 6s ease-in-out infinite;
+        }
+        .coin-1 { top: 0px; left: -40px; transform: rotate(-10deg); }
+        .coin-2 { bottom: 80px; right: -40px; background: var(--electric-cyan); animation-delay: 1s; transform: rotate(10deg); }
+
+        @keyframes float { 0%, 100% { transform: translateY(0) rotate(-10deg); } 50% { transform: translateY(-15px) rotate(-10deg); } }
+
+        /* Phone UI */
+        .phone-mockup {
+            width: 280px; height: 540px;
+            background: var(--midnight-navy);
+            border: 3px solid var(--soft-white);
+            border-radius: 36px;
+            box-shadow: 16px 16px 0px var(--ping-blue);
+            position: relative; overflow: hidden;
+            display: flex; flex-direction: column;
+            transform-style: preserve-3d;
+            transition: transform 0.2s ease;
+        }
+        
+        .phone-header { padding: 16px; border-bottom: 2px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 10px; background: #0f1a36; }
+        .avatar { width: 32px; height: 32px; background: var(--electric-cyan); border-radius: 50%; border: 2px solid var(--midnight-navy); }
+        
+        .chat-area { flex: 1; padding: 16px; display: flex; flex-direction: column; justify-content: flex-end; gap: 10px; padding-bottom: 60px; }
+        .msg { padding: 10px 14px; border-radius: 12px; font-size: 0.85rem; max-width: 85%; border: 1px solid rgba(255,255,255,0.1); opacity: 0; transform: translateY(10px); }
+        .msg-l { background: #151e36; align-self: flex-start; border-bottom-left-radius: 2px; }
+        .msg-r { background: var(--ping-blue); align-self: flex-end; border-bottom-right-radius: 2px; border-color: var(--soft-white); }
+
+        .input-bar { padding: 12px; background: #151e36; border-top: 2px solid rgba(255,255,255,0.1); display: flex; gap: 8px; align-items: center; }
+        .fake-type { flex: 1; height: 36px; background: var(--midnight-navy); border-radius: 18px; border: 1px solid rgba(255,255,255,0.2); padding: 0 12px; display: flex; align-items: center; font-size: 0.75rem; opacity: 0.6; }
+
+        /* --- 7. MARQUEE --- */
+        .marquee-section {
+            background: var(--signal-green);
+            color: var(--midnight-navy);
+            padding: 1.5rem 0;
+            transform: rotate(-1.5deg) scale(1.05);
+            overflow: hidden; white-space: nowrap;
+            border-top: 3px solid var(--midnight-navy);
+            border-bottom: 3px solid var(--midnight-navy);
+            margin-bottom: 6rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .marquee-text {
+            display: inline-block; font-family: var(--font-head); font-weight: 800; font-size: 2rem; 
+            text-transform: uppercase; animation: scroll 20s linear infinite;
+        }
+        @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        /* --- 8. FEATURES (Smooth Cards) --- */
+        .features-section { padding-bottom: 8rem; }
+        .section-head { text-align: center; margin-bottom: 4rem; }
+        .section-head h2 { font-size: 3rem; margin-bottom: 1rem; }
+
+        .grid-3 {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem;
+        }
+        
+        .feature-card {
+            background: var(--midnight-navy); border: 2px solid var(--soft-white);
+            padding: 2.5rem; border-radius: 16px;
+            box-shadow: 8px 8px 0px var(--soft-white);
+            height: 100%; display: flex; flex-direction: column; justify-content: space-between;
+            opacity: 1; 
+            /* Smoother Transition here */
+            transition: all 0.4s var(--ease-butter); 
+        }
+        
+        /* CARD 1: Default */
+        .card-default:hover { transform: translateY(-8px); box-shadow: 12px 12px 0px var(--soft-white); }
+
+        /* CARD 2: Cyan */
+        .card-cyan {
+            background: var(--electric-cyan); color: var(--midnight-navy);
+            border-color: var(--midnight-navy);
+            box-shadow: 8px 8px 0px var(--ping-blue);
+        }
+        .card-cyan p { opacity: 1; font-weight: 500; }
+        .card-cyan:hover { transform: translateY(-8px); box-shadow: 12px 12px 0px var(--ping-blue); }
+
+        /* CARD 3: White */
+        .card-white {
+            background: var(--soft-white); color: var(--midnight-navy);
+            border-color: var(--midnight-navy);
+            box-shadow: 8px 8px 0px var(--signal-green);
+        }
+        .card-white p { opacity: 1; font-weight: 500; }
+        .card-white:hover { transform: translateY(-8px); box-shadow: 12px 12px 0px var(--signal-green); }
+        
+        .icon-tile { width: 48px; height: 48px; background: var(--ping-blue); border: 2px solid var(--soft-white); display: flex; align-items: center; justify-content: center; border-radius: 8px; margin-bottom: 1.5rem; color: white; }
+
+        /* --- 9. STEPS SECTION (With Highlight) --- */
+        .steps-section { padding-bottom: 8rem; }
+        .steps-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem; counter-reset: step-counter; }
+        
+        .step-item { 
+            position: relative; padding: 2rem; border-left: 2px solid var(--electric-cyan);
+            transition: all 0.3s var(--ease-butter);
+            cursor: default;
+        }
+        
+        .step-item:hover {
+            background: rgba(62, 219, 255, 0.05);
+            transform: scale(1.02);
+        }
+
+        .step-number { 
+            font-family: var(--font-head); font-size: 4rem; font-weight: 800; 
+            color: transparent; -webkit-text-stroke: 1px var(--electric-cyan); opacity: 0.5; margin-bottom: 1rem;
+            transition: all 0.3s var(--ease-butter);
+        }
+        
+        /* Highlight Number on Hover */
+        .step-item:hover .step-number {
+            color: var(--electric-cyan);
+            -webkit-text-stroke: 0px;
+            opacity: 1;
+            text-shadow: 0 0 20px rgba(62, 219, 255, 0.5);
+        }
+
+        .step-item h3 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+
+        /* --- 10. CTA FOOTER (Fixed Responsiveness) --- */
+        .footer-section {
+            background: #050a16;
+            border-top: 3px solid var(--soft-white);
+            padding: 6rem 0 4rem 0;
+            text-align: center;
+            position: relative;
+        }
+        
+        .cta-content {
+            width: 100%; max-width: 600px; margin: 0 auto;
+            display: flex; flex-direction: column; align-items: center; gap: 2rem;
+            position: relative; z-index: 2; padding: 0 20px;
+        }
+
+        .bg-text {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            font-size: 15vw; font-weight: 800; color: transparent;
+            -webkit-text-stroke: 1px rgba(255,255,255,0.05);
+            z-index: 1; pointer-events: none; font-family: var(--font-head);
+        }
+
+        /* Footer Form Fix */
+        .footer-form {
+            display: flex; gap: 10px; width: 100%; max-width: 450px;
+        }
+
+        .socials { display: flex; gap: 20px; }
+        .social-btn { width: 48px; height: 48px; border: 2px solid var(--soft-white); border-radius: 8px; display: flex; align-items: center; justify-content: center; background: var(--soft-white); color: var(--midnight-navy); transition: 0.2s; }
+        .social-btn:hover { background: var(--electric-cyan); transform: translateY(-4px); box-shadow: 4px 4px 0px rgba(0,0,0,0.5); }
+
+        /* --- RESPONSIVE MEDIA QUERIES --- */
+        @media (max-width: 1024px) {
+            .hero-grid { grid-template-columns: 1fr; text-align: center; gap: 4rem; }
+            .hero-left, .hero-right { text-align: center; padding: 0; }
+            .hero-center { order: -1; margin-bottom: 20px; }
+            
+            .grid-3 { grid-template-columns: 1fr; }
+            .steps-grid { grid-template-columns: 1fr; }
+            
+            .bg-text { font-size: 20vw; }
+        }
+
+        /* Mobile specific footer fix */
+        @media (max-width: 600px) {
+            .footer-form {
+                flex-direction: column;
+                width: 100%;
+            }
+            .footer-form .input-brutal { width: 100%; }
+            .footer-form .btn { width: 100%; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="bg-fixed"></div>
+    <div class="bg-blob"></div>
+
+    <nav>
+        <div class="nav-inner interactive" data-sound="hover">
+            <div class="logo">
+                <div class="logo-box"></div> Ping2Pay
+            </div>
+            <a href="about.html" class="interactive" data-sound="click" style="font-weight: 600;">About</a>
+            <a href="#join" class="btn interactive" data-sound="click" style="padding: 8px 20px; font-size: 0.85rem;">Join Beta</a>
+        </div>
+    </nav>
+
+    <section class="hero-section container">
+        <div class="hero-grid">
+            
+            <div class="hero-col hero-left">
+                <h1 class="fade-in">2 Billion <br> People.</h1>
+                <p class="fade-in">We are uniting the public on the app they already use. <br>No wallets. No seed phrases.</p>
+            </div>
+
+            <div class="hero-center">
+                <div class="float-coin coin-1">₹</div>
+                <div class="float-coin coin-2">₿</div>
+
+                <div class="phone-mockup interactive" id="phone" data-sound="hover-phone">
+                    <div class="phone-header">
+                        <div class="avatar"></div>
+                        <div style="line-height: 1.1;">
+                            <div style="font-weight: 700; font-size: 0.9rem;">Rahul</div>
+                            <div style="font-size: 0.75rem; color: var(--signal-green);">Online</div>
+                        </div>
+                    </div>
+                    <div class="chat-area" id="chat-stream"></div>
+                    <div class="input-bar">
+                        <div class="fake-type" id="typewriter"></div>
+                        <div style="width: 32px; height: 32px; background: var(--ping-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center;"><i data-lucide="arrow-up" size="16"></i></div>
+                    </div>
+                </div>
+
+                <a href="#join" class="btn fade-in interactive" data-sound="click" style="width: 100%; max-width: 280px;">Start Pinging →</a>
+            </div>
+
+            <div class="hero-col hero-right">
+                <h1 class="fade-in">One Wallet. <br> <span class="highlight">Zero Apps.</span></h1>
+                <p class="fade-in">Send crypto directly inside WhatsApp. <br>Global payments, settled instantly.</p>
+            </div>
+
+        </div>
+    </section>
+
+    <div class="marquee-section">
+        <div class="marquee-text">
+            WHATSAPP NATIVE • CHAT TO PAY • NO WALLET SETUP • GLOBAL UNITY • INSTANT SETTLEMENT • NO APPS TO DOWNLOAD •
+        </div>
+    </div>
+
+    <section class="features-section container">
+        <div class="section-head">
+            <h2>Why the <span class="text-green">Public</span> loves us.</h2>
+            <p>We removed the blockchain so they can just see the money.</p>
+        </div>
+
+        <div class="grid-3">
+            <div class="feature-card card-default interactive" data-sound="hover">
+                <div class="icon-tile"><i data-lucide="smile" color="white"></i></div>
+                <h3>The Grandma Test</h3>
+                <p>Stop teaching people how to use MetaMask. If they can reply to a message, they can receive money.</p>
+            </div>
+            
+            <div class="feature-card card-cyan interactive" data-sound="hover">
+                <div class="icon-tile" style="background:var(--midnight-navy); border-color: var(--midnight-navy);"><i data-lucide="eye-off" color="white"></i></div>
+                <h3>Invisible Wallets</h3>
+                <p>We automatically generate a non-custodial wallet linked to their phone number. Hidden complexity.</p>
+            </div>
+            
+            <div class="feature-card card-white interactive" data-sound="hover">
+                <div class="icon-tile"><i data-lucide="globe" color="white"></i></div>
+                <h3>Global Unity</h3>
+                <p>A freelancer in Lagos, a developer in Vadodara, and a client in New York. Connected instantly.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="steps-section container">
+        <div class="section-head">
+            <h2>From DeFi to <span class="text-cyan">"Hi"</span>.</h2>
+            <p>Three steps. No apps.</p>
+        </div>
+
+        <div class="steps-grid">
+            <div class="step-item fade-in interactive" data-sound="hover">
+                <div class="step-number">01</div>
+                <h3>Open WhatsApp</h3>
+                <p>Start a chat with the secure Ping2Pay bot just like you text a friend.</p>
+            </div>
+            <div class="step-item fade-in interactive" data-sound="hover">
+                <div class="step-number">02</div>
+                <h3>Type Command</h3>
+                <p>Simply type "Pay @Rahul 500 USDC" or share a payment link.</p>
+            </div>
+            <div class="step-item fade-in interactive" data-sound="hover">
+                <div class="step-number">03</div>
+                <h3>Settled.</h3>
+                <p>Funds move on-chain instantly. User gets a notification.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer-section" id="join">
+        <div class="bg-text">PING2PAY</div>
+        <div class="cta-content">
+            <h2 style="font-size: 2.5rem; font-weight: 800;">Ready to ditch the wallet?</h2>
+            <p>Join the revolution. Launching soon.</p>
+            
+            <form class="footer-form">
+                <input type="text" placeholder="WhatsApp Number..." class="input-brutal interactive" data-sound="click">
+                <button class="btn interactive" data-sound="click">Join</button>
+            </form>
+
+            <div class="socials">
+                <a href="#" class="social-btn interactive" data-sound="hover"><i data-lucide="twitter"></i></a>
+                <a href="#" class="social-btn interactive" data-sound="hover"><i data-lucide="linkedin"></i></a>
+                <a href="#" class="social-btn interactive" data-sound="hover"><i data-lucide="instagram"></i></a>
+            </div>
+
+            <div style="margin-top: 40px; font-size: 0.8rem; opacity: 0.5;">© 2026 Ping2Pay.</div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.4/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.4/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.33/dist/lenis.min.js"></script>
+
+    <script>
+        lucide.createIcons();
+        
+        // 1. Smooth Scroll
+        const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
+
+        // 2. Animations
+        gsap.registerPlugin(ScrollTrigger);
+
+        const tl = gsap.timeline();
+        tl.from(".nav-inner", { y: -50, opacity: 0, duration: 0.8, ease: "power3.out" })
+          .from(".fade-in", { y: 30, opacity: 0, duration: 0.8, stagger: 0.1 }, "-=0.5")
+          .from(".phone-mockup", { y: 50, opacity: 0, duration: 1, ease: "back.out(1.5)" }, "-=0.8")
+          .from(".float-coin", { scale: 0, rotation: 180, duration: 0.8, stagger: 0.2 }, "-=0.5");
+
+        // Force opacity 1 on cards to ensure visibility even if scrolltrigger delays
+        gsap.utils.toArray('.feature-card').forEach((card, i) => {
+            gsap.fromTo(card, 
+                { opacity: 0, y: 50 },
+                { 
+                    opacity: 1, y: 0, duration: 0.6, ease: "power2.out", 
+                    scrollTrigger: { trigger: card, start: "top 90%" },
+                    delay: i * 0.1 
+                }
+            );
+        });
+
+        // 3. SOUND ENGINE
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playTone(freq, type) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+        }
+
+        document.querySelectorAll('.interactive').forEach(el => {
+            el.addEventListener('mouseenter', () => playTone(300, 'sine'));
+            el.addEventListener('mousedown', () => playTone(150, 'square'));
+        });
+
+        // 4. Chat Loop
+        const chatBox = document.getElementById('chat-stream');
+        const typer = document.getElementById('typewriter');
+        const msgs = [
+            { txt: "Dinner was great! 🍕", type: "msg-l", delay: 1000 },
+            { txt: "My share is ₹600", type: "msg-l", delay: 2000 },
+            { txt: "Pinging you now...", type: "typing", delay: 3500 },
+            { txt: "Sent ₹600 ✅", type: "msg-r", delay: 4500 },
+            { txt: "Recieved! ⚡", type: "msg-l", delay: 5500 }
+        ];
+        let i = 0;
+
+        function runChat() {
+            if(i >= msgs.length) return;
+            const m = msgs[i];
+            
+            if(m.type === 'typing') {
+                typer.innerText = "Typing...";
+                setTimeout(() => {
+                    typer.innerText = "";
+                    i++; runChat();
+                }, 1000);
+            } else {
+                setTimeout(() => {
+                    const d = document.createElement('div');
+                    d.className = `msg ${m.type}`;
+                    d.innerText = m.txt;
+                    chatBox.appendChild(d);
+                    gsap.to(d, { opacity:1, y:0, duration:0.3 });
+                    i++; runChat();
+                }, m.delay - (i>0 ? msgs[i-1].delay : 0));
+            }
+        }
+        setTimeout(runChat, 1000);
+
+        // Parallax
+        document.addEventListener("mousemove", (e) => {
+            const x = (e.clientX / window.innerWidth - 0.5) * 20;
+            const y = (e.clientY / window.innerHeight - 0.5) * 20;
+            gsap.to(".phone-mockup", { rotationY: x, rotationX: -y, duration: 1 });
+        });
+    </script>
+</body>
+</html>

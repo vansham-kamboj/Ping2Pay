@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Ping2Pay | The Team</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* --- REUSING CORE VARIABLES --- */
+        :root {
+            --midnight-navy: #0A122A;
+            --ping-blue: #1E4FFF;
+            --soft-white: #FFFFFF;
+            --signal-green: #22E584;
+            --electric-cyan: #3EDBFF;
+            --font-head: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --border-thick: 2px;
+            --shadow-hard: 6px 6px 0px var(--soft-white);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background-color: var(--midnight-navy);
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+            background-size: 40px 40px;
+            color: var(--soft-white);
+            font-family: var(--font-body);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3 { font-family: var(--font-head); line-height: 1.1; letter-spacing: -0.03em; }
+
+        /* --- UTILS --- */
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+        
+        /* --- NAV (Simplified for Subpage) --- */
+        nav {
+            padding: 2rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo { font-family: var(--font-head); font-weight: 800; font-size: 1.4rem; display: flex; gap: 10px; align-items: center; text-decoration: none; color: white;}
+        .logo-box { width: 24px; height: 24px; background: var(--electric-cyan); border: 2px solid white; box-shadow: 3px 3px 0px var(--ping-blue); border-radius: 4px; }
+
+        /* --- ABOUT HERO --- */
+        .about-hero {
+            padding: 6rem 0 4rem 0;
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+        }
+        .about-hero h1 { font-size: clamp(3rem, 5vw, 5rem); margin-bottom: 2rem; }
+        .about-hero p { font-size: 1.25rem; max-width: 700px; opacity: 0.8; line-height: 1.6; }
+
+        /* --- MISSION STATEMENT --- */
+        .mission-box {
+            margin: 4rem 0;
+            background: var(--ping-blue);
+            border: 3px solid var(--soft-white);
+            box-shadow: 10px 10px 0px var(--signal-green); /* Mismatched shadow for brutalist feel */
+            padding: 3rem;
+            border-radius: 16px;
+            transform: rotate(-1deg);
+        }
+        .mission-box h2 { font-size: 2rem; margin-bottom: 1rem; }
+
+        /* --- TEAM SECTION (CHARACTER CARDS) --- */
+        .team-section { padding: 6rem 0 8rem 0; }
+        .team-title { font-size: 3rem; margin-bottom: 3rem; text-align: center; }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 3rem;
+        }
+
+        /* The Card Design */
+        .char-card {
+            background: var(--midnight-navy);
+            border: 3px solid var(--soft-white);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            transition: transform 0.2s ease;
+            box-shadow: 8px 8px 0px var(--soft-white);
+        }
+
+        .char-card:hover {
+            transform: translate(-4px, -4px);
+            box-shadow: 12px 12px 0px var(--electric-cyan);
+            border-color: var(--electric-cyan);
+        }
+
+        /* Image Area */
+        .char-img-box {
+            height: 220px;
+            background: #151e36;
+            border-bottom: 3px solid var(--soft-white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        /* Using Lucide Icons as Avatars to keep file size low, replace with <img> if needed */
+        .char-avatar {
+            transform: scale(1.5);
+            filter: drop-shadow(4px 4px 0px rgba(0,0,0,0.5));
+        }
+
+        /* Info Area */
+        .char-info {
+            padding: 1.5rem;
+        }
+
+        .char-role {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--signal-green);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .char-name {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            line-height: 1;
+        }
+
+        /* Stats Bars (Gaming Style) */
+        .stat-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+            font-family: var(--font-body);
+            opacity: 0.9;
+        }
+        
+        .progress-bar {
+            width: 60%;
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid var(--soft-white);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--electric-cyan);
+        }
+
+        /* Footer */
+        footer {
+            border-top: 2px solid var(--soft-white);
+            text-align: center;
+            padding: 4rem 0;
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.4);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <nav>
+            <a href="index.html" class="logo">
+                <div class="logo-box"></div>
+                Ping2Pay
+            </a>
+            <a href="index.html" style="color: white; text-decoration: none; font-weight: 600; border-bottom: 2px solid transparent; transition: 0.2s;">Back to Home</a>
+        </nav>
+
+        <section class="about-hero">
+            <h1>We are bridging <span style="color: var(--electric-cyan);">Chains</span> <br>to connect <span style="color: var(--signal-green);">Change.</span></h1>
+            <p>We believe payments should be as simple as a text message. No gas fees, no wallet addresses, no headaches. Just pure connection.</p>
+        </section>
+
+        <section class="mission-box">
+            <h2>The Mission</h2>
+            <p style="font-size: 1.1rem; line-height: 1.6;">
+                There are 2 billion people on WhatsApp and only 300 million in Crypto. The gap isn't technology; it's usability. <br><br>
+                <strong>Ping2Pay</strong> exists to close that gap. We are building the infrastructure that makes blockchain invisible, so the value becomes visible.
+            </p>
+        </section>
+
+        <section class="team-section">
+            <h2 class="team-title">Know the Builders</h2>
+            
+            <div class="team-grid">
+                
+                <div class="char-card">
+                    <div class="char-img-box" style="background: #1E4FFF;">
+                        <i data-lucide="crown" size="64" color="white" class="char-avatar"></i>
+                    </div>
+                    <div class="char-info">
+                        <span class="char-role">Founder & CEO</span>
+                        <h3 class="char-name">Vansham</h3>
+                        
+                        <div class="stat-row">
+                            <span>Vision</span>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 100%; background: #22E584;"></div></div>
+                        </div>
+                        <div class="stat-row">
+                            <span>Strategy</span>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 90%;"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="char-card">
+                    <div class="char-img-box" style="background: #22E584;">
+                        <i data-lucide="code-2" size="64" color="#0A122A" class="char-avatar"></i>
+                    </div>
+                    <div class="char-info">
+                        <span class="char-role">Co-Founder & Tech</span>
+                        <h3 class="char-name">Nitesh</h3>
+                        
+                        <div class="stat-row">
+                            <span>Coding</span>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 98%;"></div></div>
+                        </div>
+                        <div class="stat-row">
+                            <span>Logic</span>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 95%;"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="char-card">
+                    <div class="char-img-box" style="background: #3EDBFF;">
+                        <i data-lucide="smartphone" size="64" color="#0A122A" class="char-avatar"></i>
+                    </div>
+                    <div class="char-info">
+                        <span class="char-role">Product Design</span>
+                        <h3 class="char-name">Aryan</h3>
+                        
+                        <div class="stat-row">
+                            <span>UI/UX</span>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 90%; background: #1E4FFF;"></div></div>
+                        </div>
+                        <div class="stat-row">
+                            <span>Creativity</span>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 85%;"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="char-card">
+                    <div class="char-img-box" style="background: #FF0055;">
+                        <i data-lucide="server" size="64" color="white" class="char-avatar"></i>
+                    </div>
+                    <div class="char-info">
+                        <span class="char-role">Blockchain Dev</span>
+                        <h3 class="char-name">Dev</h3>
+                        
+                        <div class="stat-row">
+                            <span>Solidity</span>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 92%;"></div></div>
+                        </div>
+                        <div class="stat-row">
+                            <span>Security</span>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 96%;"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        © 2026 Ping2Pay. Built for the Public.
+    </footer>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
