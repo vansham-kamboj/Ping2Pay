@@ -25,9 +25,8 @@
             
             --border-thick: 2px;
             --shadow-depth: 5px;
-            
-            /* Premium Smooth Easing */
-            --ease-butter: cubic-bezier(0.23, 1, 0.32, 1); 
+            --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --ease-butter: cubic-bezier(0.23, 1, 0.32, 1);
             
             --container-max: 1200px;
         }
@@ -44,7 +43,7 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Moving Gradient Background */
+        /* Backgrounds */
         .bg-fixed {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
             background-image: 
@@ -86,8 +85,6 @@
         .text-cyan { color: var(--electric-cyan); }
 
         /* --- 4. COMPONENTS --- */
-        
-        /* Interactive Buttons */
         .btn {
             display: inline-flex; align-items: center; justify-content: center;
             padding: 14px 32px;
@@ -97,9 +94,8 @@
             border: var(--border-thick) solid var(--soft-white);
             border-radius: 8px;
             box-shadow: 6px 6px 0px var(--soft-white); 
-            transition: all 0.4s var(--ease-butter);
+            transition: all 0.2s var(--ease-spring);
             cursor: pointer;
-            white-space: nowrap;
         }
         .btn:hover {
             transform: translate(2px, 2px);
@@ -110,7 +106,6 @@
         }
         .btn:active { transform: translate(6px, 6px); box-shadow: none; }
 
-        /* Input Fields */
         .input-brutal {
             width: 100%; padding: 16px;
             background: var(--midnight-navy);
@@ -118,7 +113,7 @@
             border-radius: 8px; color: var(--soft-white);
             font-family: var(--font-body); font-weight: 500; outline: none;
             box-shadow: 4px 4px 0px rgba(255,255,255,0.2); 
-            transition: 0.3s var(--ease-butter);
+            transition: 0.2s;
         }
         .input-brutal:focus { border-color: var(--electric-cyan); box-shadow: 4px 4px 0px var(--electric-cyan); }
 
@@ -128,7 +123,6 @@
             z-index: 1000; pointer-events: none;
             padding: 0 20px;
         }
-        
         .nav-inner {
             max-width: 600px; margin: 0 auto;
             background: rgba(10, 18, 42, 0.95); backdrop-filter: blur(10px);
@@ -138,39 +132,32 @@
             pointer-events: auto;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
-
         .logo { font-family: var(--font-head); font-weight: 800; font-size: 1.2rem; display: flex; align-items: center; gap: 10px; }
         .logo-box { width: 20px; height: 20px; background: var(--electric-cyan); border: 2px solid var(--soft-white); box-shadow: 2px 2px 0px var(--ping-blue); border-radius: 4px; }
 
         /* --- 6. HERO SECTION --- */
         .hero-section {
             padding-top: 140px;
-            padding-bottom: 60px; /* Reduced bottom padding */
-            /* Removed min-height 100vh to fit PC better */
+            padding-bottom: 60px;
             display: flex; align-items: center;
         }
-
         .hero-grid {
             display: grid;
-            grid-template-columns: 1fr 320px 1fr; /* PC Layout */
+            grid-template-columns: 1fr 320px 1fr;
             gap: 2rem;
             align-items: center;
         }
-
         .hero-col h1 { font-size: clamp(3rem, 4vw, 4.5rem); font-weight: 800; margin-bottom: 1rem; }
         .hero-col p { font-size: 1.1rem; margin-bottom: 2rem; }
-
         .hero-left { text-align: right; }
         .hero-right { text-align: left; }
         
-        /* Center Phone Container */
         .hero-center {
             position: relative;
             display: flex; flex-direction: column; align-items: center;
             gap: 2rem;
         }
 
-        /* Floating Coins - INSIDE CENTER CONTAINER */
         .float-coin {
             position: absolute;
             width: 60px; height: 60px;
@@ -186,10 +173,8 @@
         }
         .coin-1 { top: 0px; left: -40px; transform: rotate(-10deg); }
         .coin-2 { bottom: 80px; right: -40px; background: var(--electric-cyan); animation-delay: 1s; transform: rotate(10deg); }
-
         @keyframes float { 0%, 100% { transform: translateY(0) rotate(-10deg); } 50% { transform: translateY(-15px) rotate(-10deg); } }
 
-        /* Phone UI */
         .phone-mockup {
             width: 280px; height: 540px;
             background: var(--midnight-navy);
@@ -201,15 +186,12 @@
             transform-style: preserve-3d;
             transition: transform 0.2s ease;
         }
-        
         .phone-header { padding: 16px; border-bottom: 2px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 10px; background: #0f1a36; }
         .avatar { width: 32px; height: 32px; background: var(--electric-cyan); border-radius: 50%; border: 2px solid var(--midnight-navy); }
-        
         .chat-area { flex: 1; padding: 16px; display: flex; flex-direction: column; justify-content: flex-end; gap: 10px; padding-bottom: 60px; }
         .msg { padding: 10px 14px; border-radius: 12px; font-size: 0.85rem; max-width: 85%; border: 1px solid rgba(255,255,255,0.1); opacity: 0; transform: translateY(10px); }
         .msg-l { background: #151e36; align-self: flex-start; border-bottom-left-radius: 2px; }
         .msg-r { background: var(--ping-blue); align-self: flex-end; border-bottom-right-radius: 2px; border-color: var(--soft-white); }
-
         .input-bar { padding: 12px; background: #151e36; border-top: 2px solid rgba(255,255,255,0.1); display: flex; gap: 8px; align-items: center; }
         .fake-type { flex: 1; height: 36px; background: var(--midnight-navy); border-radius: 18px; border: 1px solid rgba(255,255,255,0.2); padding: 0 12px; display: flex; align-items: center; font-size: 0.75rem; opacity: 0.6; }
 
@@ -231,7 +213,7 @@
         }
         @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
-        /* --- 8. FEATURES (Smooth Cards) --- */
+        /* --- 8. FEATURES --- */
         .features-section { padding-bottom: 8rem; }
         .section-head { text-align: center; margin-bottom: 4rem; }
         .section-head h2 { font-size: 3rem; margin-bottom: 1rem; }
@@ -246,14 +228,11 @@
             box-shadow: 8px 8px 0px var(--soft-white);
             height: 100%; display: flex; flex-direction: column; justify-content: space-between;
             opacity: 1; 
-            /* Smoother Transition here */
             transition: all 0.4s var(--ease-butter); 
         }
         
-        /* CARD 1: Default */
         .card-default:hover { transform: translateY(-8px); box-shadow: 12px 12px 0px var(--soft-white); }
 
-        /* CARD 2: Cyan */
         .card-cyan {
             background: var(--electric-cyan); color: var(--midnight-navy);
             border-color: var(--midnight-navy);
@@ -262,7 +241,6 @@
         .card-cyan p { opacity: 1; font-weight: 500; }
         .card-cyan:hover { transform: translateY(-8px); box-shadow: 12px 12px 0px var(--ping-blue); }
 
-        /* CARD 3: White */
         .card-white {
             background: var(--soft-white); color: var(--midnight-navy);
             border-color: var(--midnight-navy);
@@ -273,7 +251,7 @@
         
         .icon-tile { width: 48px; height: 48px; background: var(--ping-blue); border: 2px solid var(--soft-white); display: flex; align-items: center; justify-content: center; border-radius: 8px; margin-bottom: 1.5rem; color: white; }
 
-        /* --- 9. STEPS SECTION (With Highlight) --- */
+        /* --- 9. STEPS SECTION (UPDATED) --- */
         .steps-section { padding-bottom: 8rem; }
         .steps-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem; counter-reset: step-counter; }
         
@@ -281,11 +259,13 @@
             position: relative; padding: 2rem; border-left: 2px solid var(--electric-cyan);
             transition: all 0.3s var(--ease-butter);
             cursor: default;
+            opacity: 1; 
+            background: transparent; /* Ensure no BG on hover */
         }
         
+        /* Removed background color change on hover */
         .step-item:hover {
-            background: rgba(62, 219, 255, 0.05);
-            transform: scale(1.02);
+            transform: translateX(5px);
         }
 
         .step-number { 
@@ -304,7 +284,7 @@
 
         .step-item h3 { font-size: 1.5rem; margin-bottom: 0.5rem; }
 
-        /* --- 10. CTA FOOTER (Fixed Responsiveness) --- */
+        /* --- 10. CTA FOOTER --- */
         .footer-section {
             background: #050a16;
             border-top: 3px solid var(--soft-white);
@@ -326,7 +306,6 @@
             z-index: 1; pointer-events: none; font-family: var(--font-head);
         }
 
-        /* Footer Form Fix */
         .footer-form {
             display: flex; gap: 10px; width: 100%; max-width: 450px;
         }
@@ -347,7 +326,6 @@
             .bg-text { font-size: 20vw; }
         }
 
-        /* Mobile specific footer fix */
         @media (max-width: 600px) {
             .footer-form {
                 flex-direction: column;
@@ -452,17 +430,17 @@
         </div>
 
         <div class="steps-grid">
-            <div class="step-item fade-in interactive" data-sound="hover">
+            <div class="step-item interactive" data-sound="hover">
                 <div class="step-number">01</div>
                 <h3>Open WhatsApp</h3>
                 <p>Start a chat with the secure Ping2Pay bot just like you text a friend.</p>
             </div>
-            <div class="step-item fade-in interactive" data-sound="hover">
+            <div class="step-item interactive" data-sound="hover">
                 <div class="step-number">02</div>
                 <h3>Type Command</h3>
                 <p>Simply type "Pay @Rahul 500 USDC" or share a payment link.</p>
             </div>
-            <div class="step-item fade-in interactive" data-sound="hover">
+            <div class="step-item interactive" data-sound="hover">
                 <div class="step-number">03</div>
                 <h3>Settled.</h3>
                 <p>Funds move on-chain instantly. User gets a notification.</p>
@@ -512,13 +490,24 @@
           .from(".phone-mockup", { y: 50, opacity: 0, duration: 1, ease: "back.out(1.5)" }, "-=0.8")
           .from(".float-coin", { scale: 0, rotation: 180, duration: 0.8, stagger: 0.2 }, "-=0.5");
 
-        // Force opacity 1 on cards to ensure visibility even if scrolltrigger delays
+        // Scroll Triggers - Force visibility
         gsap.utils.toArray('.feature-card').forEach((card, i) => {
             gsap.fromTo(card, 
                 { opacity: 0, y: 50 },
                 { 
                     opacity: 1, y: 0, duration: 0.6, ease: "power2.out", 
                     scrollTrigger: { trigger: card, start: "top 90%" },
+                    delay: i * 0.1 
+                }
+            );
+        });
+        
+        gsap.utils.toArray('.step-item').forEach((step, i) => {
+            gsap.fromTo(step, 
+                { opacity: 0, x: -20 },
+                { 
+                    opacity: 1, x: 0, duration: 0.6, ease: "power2.out", 
+                    scrollTrigger: { trigger: step, start: "top 90%" },
                     delay: i * 0.1 
                 }
             );
