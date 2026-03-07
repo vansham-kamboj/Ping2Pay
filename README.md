@@ -1,1 +1,0 @@
-# Ping2Pay
