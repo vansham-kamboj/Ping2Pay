@@ -1,0 +1,959 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ping2Pay Frontend Design</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;700;800&family=Space+Grotesk:wght@500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --midnight-navy: #0a122a;
+        --ping-blue: #1e4fff;
+        --soft-white: #ffffff;
+        --signal-green: #22e584;
+        --electric-cyan: #3edbff;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background: var(--midnight-navy);
+        color: var(--soft-white);
+        font-family: "Inter", sans-serif;
+        overflow-x: hidden;
+      }
+
+      h1,
+      h2,
+      h3 {
+        font-family: "Space Grotesk", sans-serif;
+        letter-spacing: -0.02em;
+        line-height: 1.1;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .container {
+        margin: 0 auto;
+        max-width: 1200px;
+        padding: 0 24px;
+        width: 100%;
+      }
+
+      .bg-fixed {
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        background-size: 40px 40px;
+        height: 100%;
+        left: 0;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: -1;
+      }
+
+      .bg-blob {
+        animation: pulse-bg 10s infinite alternate;
+        background: radial-gradient(circle, rgba(30, 79, 255, 0.15) 0%, transparent 70%);
+        height: 80vw;
+        left: 50%;
+        position: fixed;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 80vw;
+        z-index: -2;
+      }
+
+      .nav {
+        left: 0;
+        padding: 0 20px;
+        pointer-events: none;
+        position: fixed;
+        top: 20px;
+        width: 100%;
+        z-index: 1000;
+      }
+
+      .nav-inner {
+        align-items: center;
+        backdrop-filter: blur(10px);
+        background: rgba(10, 18, 42, 0.95);
+        border: 2px solid #fff;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        display: flex;
+        justify-content: space-between;
+        margin: 0 auto;
+        max-width: 600px;
+        padding: 10px 20px;
+        pointer-events: auto;
+      }
+
+      .logo {
+        align-items: center;
+        display: flex;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 1.2rem;
+        font-weight: 800;
+        gap: 10px;
+      }
+
+      .logo-box {
+        background: #3edbff;
+        border: 2px solid #fff;
+        border-radius: 4px;
+        box-shadow: 2px 2px 0 #1e4fff;
+        height: 20px;
+        width: 20px;
+      }
+
+      .btn {
+        align-items: center;
+        background: #1e4fff;
+        border: 2px solid #fff;
+        border-radius: 8px;
+        box-shadow: 6px 6px 0 #fff;
+        color: #fff;
+        cursor: pointer;
+        display: inline-flex;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 1rem;
+        font-weight: 700;
+        justify-content: center;
+        letter-spacing: 0.05em;
+        padding: 14px 32px;
+        text-transform: uppercase;
+        transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+
+      .btn:hover {
+        background: #3edbff;
+        border-color: #0a122a;
+        box-shadow: 2px 2px 0 #fff;
+        color: #0a122a;
+        transform: translate(2px, 2px);
+      }
+
+      .join-btn {
+        font-size: 0.85rem;
+        padding: 8px 20px;
+      }
+
+      .hero-section {
+        padding-bottom: 40px;
+        padding-top: 140px;
+      }
+
+      .hero-stage {
+        align-items: center;
+        column-gap: clamp(1.5rem, 4vw, 4rem);
+        display: grid;
+        grid-template-columns: minmax(240px, 300px) 1fr;
+        min-height: 82vh;
+        padding-top: 2rem;
+        position: relative;
+      }
+
+      .hero-content {
+        align-items: flex-start;
+        display: flex;
+        flex-direction: column;
+        gap: 1.4rem;
+      }
+
+      .hero-mega {
+        color: #fff;
+        font-family: "Anton", sans-serif;
+        font-size: clamp(2.5rem, 6.8vw, 6.6rem);
+        font-weight: 400;
+        line-height: 0.9;
+        text-align: left;
+        text-transform: uppercase;
+      }
+
+      .hero-mega span {
+        display: block;
+      }
+
+      .phone-wrap {
+        justify-self: start;
+        left: auto;
+        position: relative;
+        top: auto;
+        transform: none;
+        width: 280px;
+        z-index: 10;
+      }
+
+      .float-coin {
+        align-items: center;
+        animation: float 6s ease-in-out infinite;
+        background: #22e584;
+        border: 3px solid #0a122a;
+        border-radius: 50%;
+        box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
+        color: #0a122a;
+        display: flex;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 1.5rem;
+        font-weight: 800;
+        height: 60px;
+        justify-content: center;
+        position: absolute;
+        width: 60px;
+      }
+
+      .coin-one {
+        left: -40px;
+        top: 0;
+      }
+
+      .coin-two {
+        animation-delay: 1s;
+        background: #3edbff;
+        bottom: 80px;
+        right: -40px;
+      }
+
+      .phone {
+        background: #0a122a;
+        border: 3px solid #fff;
+        border-radius: 36px;
+        box-shadow: 16px 16px 0 #1e4fff;
+        display: flex;
+        flex-direction: column;
+        height: 540px;
+        overflow: hidden;
+        width: 280px;
+      }
+
+      .phone-header {
+        align-items: center;
+        background: #0f1a36;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        gap: 10px;
+        padding: 16px;
+      }
+
+      .avatar {
+        background: #3edbff;
+        border: 2px solid #0a122a;
+        border-radius: 50%;
+        height: 32px;
+        width: 32px;
+      }
+
+      .header-name {
+        font-size: 0.9rem;
+        font-weight: 700;
+      }
+
+      .header-status {
+        color: #22e584;
+        font-size: 0.75rem;
+      }
+
+      .chat-area {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        gap: 10px;
+        justify-content: flex-end;
+        padding: 16px 16px 60px;
+      }
+
+      .msg {
+        animation: fade-up 0.3s ease forwards;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        font-size: 0.85rem;
+        max-width: 85%;
+        opacity: 0;
+        padding: 10px 14px;
+        transform: translateY(10px);
+      }
+
+      .msg-l {
+        align-self: flex-start;
+        background: #151e36;
+      }
+
+      .msg-r {
+        align-self: flex-end;
+        background: #1e4fff;
+        border-color: #fff;
+      }
+
+      .input-bar {
+        align-items: center;
+        background: #151e36;
+        border-top: 2px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        gap: 8px;
+        padding: 12px;
+      }
+
+      .typing {
+        align-items: center;
+        background: #0a122a;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 18px;
+        display: flex;
+        flex: 1;
+        font-size: 0.75rem;
+        height: 36px;
+        opacity: 0.6;
+        padding: 0 12px;
+      }
+
+      .send-btn {
+        align-items: center;
+        background: #1e4fff;
+        border-radius: 50%;
+        display: flex;
+        font-weight: 800;
+        height: 32px;
+        justify-content: center;
+        width: 32px;
+      }
+
+      .start-btn {
+        max-width: 280px;
+        position: relative;
+        width: 100%;
+        z-index: 6;
+      }
+
+      .hero-copy {
+        max-width: 560px;
+        opacity: 0.84;
+        position: static;
+        text-align: left;
+      }
+
+      .features-section,
+      .steps-section,
+      .faq-section {
+        padding-bottom: 8rem;
+      }
+
+      .section-head {
+        margin-bottom: 4rem;
+        text-align: center;
+      }
+
+      .section-head h2 {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+      }
+
+      .text-green {
+        color: #22e584;
+      }
+
+      .text-cyan {
+        color: #3edbff;
+      }
+
+      .grid3 {
+        display: grid;
+        gap: 2rem;
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .feature-card {
+        border-radius: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        padding: 2.5rem;
+      }
+
+      .card-default {
+        background: #0a122a;
+        border: 2px solid #fff;
+        box-shadow: 8px 8px 0 #fff;
+      }
+
+      .card-cyan {
+        background: #3edbff;
+        border: 2px solid #0a122a;
+        box-shadow: 8px 8px 0 #1e4fff;
+        color: #0a122a;
+      }
+
+      .card-white {
+        background: #fff;
+        border: 2px solid #0a122a;
+        box-shadow: 8px 8px 0 #22e584;
+        color: #0a122a;
+      }
+
+      .icon-tile {
+        align-items: center;
+        background: #1e4fff;
+        border: 2px solid #fff;
+        border-radius: 8px;
+        color: #fff;
+        display: flex;
+        font-size: 22px;
+        height: 48px;
+        justify-content: center;
+        width: 48px;
+      }
+
+      .icon-dark {
+        background: #0a122a;
+        border-color: #0a122a;
+      }
+
+      .steps-grid {
+        display: grid;
+        gap: 2rem;
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .step-item {
+        border-left: 2px solid #3edbff;
+        padding: 2rem;
+      }
+
+      .step-number {
+        -webkit-text-stroke: 1px #3edbff;
+        color: transparent;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 4rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+      }
+
+      .step-item h3 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .faq-layout {
+        display: grid;
+        gap: 1.2rem;
+        grid-template-columns: 2fr 1fr;
+      }
+
+      .faq-list {
+        background: rgba(10, 18, 42, 0.38);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      .faq-row {
+        align-items: center;
+        background: rgba(255, 255, 255, 0.02);
+        border: 0;
+        border-bottom: 1px solid rgba(62, 219, 255, 0.32);
+        color: #fff;
+        cursor: pointer;
+        display: grid;
+        gap: 1.4rem;
+        grid-template-columns: 54px 1fr auto;
+        padding: 1rem 1.2rem;
+        text-align: left;
+        width: 100%;
+      }
+
+      .faq-row.active {
+        background: linear-gradient(90deg, rgba(30, 79, 255, 0.42), rgba(62, 219, 255, 0.2));
+      }
+
+      .faq-index {
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 1.35rem;
+      }
+
+      .faq-question {
+        font-size: 1.08rem;
+      }
+
+      .faq-panel {
+        background: linear-gradient(180deg, rgba(30, 79, 255, 0.35) 0%, rgba(10, 18, 42, 0.88) 100%);
+        border-radius: 14px;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+        min-height: 380px;
+        padding: 1.2rem;
+      }
+
+      .faq-panel-index {
+        font-family: "Anton", sans-serif;
+        font-size: clamp(2.4rem, 4vw, 4.2rem);
+        margin-bottom: 1.2rem;
+      }
+
+      .faq-panel-body {
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 10px;
+        min-height: 78%;
+        padding: 1rem 1.1rem;
+      }
+
+      .faq-panel-body h3 {
+        font-size: 1.35rem;
+        margin-bottom: 0.8rem;
+      }
+
+      .faq-panel-body p {
+        line-height: 1.65;
+        opacity: 0.9;
+      }
+
+      .footer-section {
+        background: #050a16;
+        border-top: 3px solid #fff;
+        padding: 6rem 0 4rem;
+        position: relative;
+        text-align: center;
+      }
+
+      .bg-text {
+        -webkit-text-stroke: 1px rgba(255, 255, 255, 0.05);
+        color: transparent;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 15vw;
+        font-weight: 800;
+        left: 50%;
+        pointer-events: none;
+        position: absolute;
+        top: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      .cta-content {
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        margin: 0 auto;
+        max-width: 600px;
+        padding: 0 20px;
+        position: relative;
+      }
+
+      .cta-content h2 {
+        font-size: 2.5rem;
+      }
+
+      .footer-form {
+        display: flex;
+        gap: 10px;
+        max-width: 450px;
+        width: 100%;
+      }
+
+      .input-brutal {
+        background: #0a122a;
+        border: 2px solid #fff;
+        border-radius: 8px;
+        box-shadow: 4px 4px 0 rgba(255, 255, 255, 0.2);
+        color: #fff;
+        font-family: "Inter", sans-serif;
+        outline: none;
+        padding: 16px;
+        width: 100%;
+      }
+
+      .socials {
+        display: flex;
+        gap: 20px;
+      }
+
+      .social-btn {
+        align-items: center;
+        background: #fff;
+        border: 2px solid #fff;
+        border-radius: 8px;
+        color: #0a122a;
+        display: flex;
+        font-weight: 700;
+        height: 48px;
+        justify-content: center;
+        width: 48px;
+      }
+
+      .copy {
+        font-size: 0.8rem;
+        margin-top: 40px;
+        opacity: 0.5;
+      }
+
+      .reveal {
+        opacity: 0;
+        transform: translateY(22px);
+      }
+
+      @keyframes pulse-bg {
+        0% {
+          opacity: 0.5;
+          transform: translate(-50%, -50%) scale(0.8);
+        }
+        100% {
+          opacity: 1;
+          transform: translate(-50%, -50%) scale(1.2);
+        }
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-15px);
+        }
+      }
+
+      @keyframes fade-up {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 1024px) {
+        .grid3,
+        .steps-grid,
+        .faq-layout {
+          grid-template-columns: 1fr;
+        }
+
+        .hero-stage {
+          grid-template-columns: 1fr;
+          justify-items: center;
+          row-gap: 1.4rem;
+        }
+
+        .hero-content {
+          align-items: center;
+        }
+
+        .hero-mega,
+        .hero-copy {
+          text-align: center;
+        }
+
+        .hero-copy {
+          width: 95%;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .hero-section {
+          padding-top: 120px;
+        }
+
+        .hero-stage {
+          min-height: 90vh;
+        }
+
+        .phone-wrap {
+          width: 250px;
+        }
+
+        .phone {
+          height: 500px;
+          width: 250px;
+        }
+
+        .footer-form {
+          flex-direction: column;
+        }
+
+        .footer-form .btn {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg-fixed"></div>
+    <div class="bg-blob"></div>
+
+    <nav class="nav">
+      <div class="nav-inner">
+        <div class="logo"><div class="logo-box"></div> Ping2Pay</div>
+        <a href="#about">About</a>
+        <a href="#join" class="btn join-btn">Join Beta</a>
+      </div>
+    </nav>
+
+    <section class="hero-section">
+      <div class="container">
+                <div class="hero-stage">
+          <div class="phone-wrap" id="phone-wrap">
+            <div class="float-coin coin-one">$</div>
+            <div class="float-coin coin-two">BTC</div>
+            <div class="phone">
+              <div class="phone-header">
+                <div class="avatar"></div>
+                <div>
+                  <div class="header-name">Ping2Pay</div>
+                  <div class="header-status">Online</div>
+                </div>
+              </div>
+              <div class="chat-area" id="chat-area"></div>
+              <div class="input-bar">
+                <div class="typing" id="typing">Ping2Pay is typing...</div>
+                <div class="send-btn">^</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-content">
+            <h1 class="hero-mega" id="hero-title">
+              <span>2 BILLION PEOPLE.</span>
+              <span>ONE WALLET.</span>
+              <span>ZERO APPS.</span>
+            </h1>
+
+            <a href="#join" class="btn start-btn">Start Pinging -&gt;</a>
+            <p class="hero-copy">
+              We are uniting the public on the app they already use. No wallets. No seed phrases.
+              Send crypto directly inside WhatsApp. Global payments, settled instantly.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="features-section">
+      <div class="container">
+        <div class="section-head reveal">
+          <h2>Why the <span class="text-green">Public</span> loves us.</h2>
+          <p>We removed the blockchain so they can just see the money.</p>
+        </div>
+
+        <div class="grid3">
+          <article class="feature-card card-default reveal">
+            <div class="icon-tile">☺</div>
+            <h3>The Grandma Test</h3>
+            <p>
+              Stop teaching people how to use MetaMask. If they can reply to a message, they can
+              receive money.
+            </p>
+          </article>
+          <article class="feature-card card-cyan reveal">
+            <div class="icon-tile icon-dark">◉</div>
+            <h3>Invisible Wallets</h3>
+            <p>
+              We automatically generate a non-custodial wallet linked to their phone number. Hidden
+              complexity.
+            </p>
+          </article>
+          <article class="feature-card card-white reveal">
+            <div class="icon-tile">G</div>
+            <h3>Global Unity</h3>
+            <p>
+              A freelancer in Lagos, a developer in Vadodara, and a client in New York. Connected
+              instantly.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="steps-section">
+      <div class="container">
+        <div class="section-head reveal">
+          <h2>From DeFi to <span class="text-cyan">"Hi"</span>.</h2>
+          <p>Three steps. No apps.</p>
+        </div>
+        <div class="steps-grid">
+          <article class="step-item reveal">
+            <div class="step-number">01</div>
+            <h3>Open WhatsApp</h3>
+            <p>Start a chat with the secure Ping2Pay bot just like you text a friend.</p>
+          </article>
+          <article class="step-item reveal">
+            <div class="step-number">02</div>
+            <h3>Type Command</h3>
+            <p>Simply type "Pay @Rahul 500 USDC" or share a payment link.</p>
+          </article>
+          <article class="step-item reveal">
+            <div class="step-number">03</div>
+            <h3>Settled.</h3>
+            <p>Funds move on-chain instantly. User gets a notification.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="faq-section" id="about">
+      <div class="container">
+        <div class="section-head reveal">
+          <h2>Frequently Asked <span class="text-cyan">Questions</span></h2>
+          <p>Everything teams ask before enabling chat-native crypto payments.</p>
+        </div>
+        <div class="faq-layout">
+          <div class="faq-list reveal" id="faq-list"></div>
+          <aside class="faq-panel reveal">
+            <div class="faq-panel-index" id="faq-panel-index">01</div>
+            <div class="faq-panel-body">
+              <h3 id="faq-panel-question"></h3>
+              <p id="faq-panel-answer"></p>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer-section reveal" id="join">
+      <div class="bg-text">PING2PAY</div>
+      <div class="cta-content">
+        <h2>Ready to ditch the wallet?</h2>
+        <p>Join the revolution. Launching soon.</p>
+        <form class="footer-form" onsubmit="event.preventDefault()">
+          <input class="input-brutal" placeholder="WhatsApp Number..." />
+          <button class="btn" type="submit">Join</button>
+        </form>
+        <div class="socials">
+          <a href="#" class="social-btn">X</a>
+          <a href="#" class="social-btn">in</a>
+          <a href="#" class="social-btn">ig</a>
+        </div>
+        <div class="copy">&copy; 2026 Ping2Pay.</div>
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/ScrollTrigger.min.js"></script>
+    <script>
+      const chatSequence = [
+        { type: "msg-r", text: "Send $10 to Rahul", delay: 800 },
+        { type: "typing", text: "Ping2Pay is typing...", delay: 700 },
+        { type: "msg-l", text: "Processing payment to Rahul...", delay: 800 },
+        { type: "msg-l", text: "$10 sent to Rahul.", delay: 800 },
+        { type: "msg-l", text: "Rahul received $10.", delay: 800 }
+      ];
+
+      const faqItems = [
+        {
+          id: "01",
+          question: "How is this WhatsApp-native?",
+          answer:
+            "Ping2Pay runs in chat flow. Users use simple message commands and never need to switch to a separate wallet app."
+        },
+        {
+          id: "02",
+          question: "Do users need seed phrases?",
+          answer:
+            "No. Wallet complexity is abstracted for normal users. They just message Ping2Pay while security and key management stay behind the scenes."
+        },
+        {
+          id: "03",
+          question: "How fast are settlements?",
+          answer:
+            "Payments are pushed on-chain instantly and both parties receive quick in-chat confirmations for near real-time transfers."
+        },
+        {
+          id: "04",
+          question: "Can we use this for team payouts?",
+          answer:
+            "Yes. Teams can configure payment flows, limits, and approval rules while keeping the actual send experience simple for members."
+        }
+      ];
+
+      const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+      const chatArea = document.getElementById("chat-area");
+      const typing = document.getElementById("typing");
+
+      async function runChat() {
+        for (const item of chatSequence) {
+          await sleep(item.delay);
+          if (item.type === "typing") {
+            typing.textContent = item.text;
+            await sleep(700);
+            typing.textContent = "";
+            continue;
+          }
+          const bubble = document.createElement("div");
+          bubble.className = `msg ${item.type}`;
+          bubble.textContent = item.text;
+          chatArea.appendChild(bubble);
+        }
+      }
+
+      function initFaq() {
+        const list = document.getElementById("faq-list");
+        const panelIndex = document.getElementById("faq-panel-index");
+        const panelQuestion = document.getElementById("faq-panel-question");
+        const panelAnswer = document.getElementById("faq-panel-answer");
+
+        const renderActive = (active) => {
+          panelIndex.textContent = faqItems[active].id;
+          panelQuestion.textContent = faqItems[active].question;
+          panelAnswer.textContent = faqItems[active].answer;
+          list.querySelectorAll(".faq-row").forEach((row, i) => {
+            row.classList.toggle("active", i === active);
+          });
+        };
+
+        faqItems.forEach((item, index) => {
+          const row = document.createElement("button");
+          row.type = "button";
+          row.className = "faq-row";
+          row.innerHTML = `
+            <span class="faq-index">${item.id}</span>
+            <span class="faq-question">${item.question}</span>
+            <span>-&gt;</span>
+          `;
+          row.addEventListener("mouseenter", () => renderActive(index));
+          row.addEventListener("focus", () => renderActive(index));
+          row.addEventListener("click", () => renderActive(index));
+          list.appendChild(row);
+        });
+
+        renderActive(0);
+      }
+
+      function initGsap() {
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        gsap.registerPlugin(ScrollTrigger);
+
+        gsap
+          .timeline({ defaults: { ease: "power2.out" } })
+          .from(".nav-inner", { y: -28, opacity: 0, duration: 0.5 })
+          .from("#hero-title span", { y: 24, opacity: 0, stagger: 0.09, duration: 0.45 }, "-=0.2")
+          .from("#phone-wrap", { y: 32, opacity: 0, duration: 0.55 }, "-=0.1")
+          .from(".start-btn, .hero-copy", { y: 16, opacity: 0, stagger: 0.1, duration: 0.45 }, "-=0.25");
+
+        gsap.utils.toArray(".reveal").forEach((el) => {
+          gsap.to(el, {
+            y: 0,
+            opacity: 1,
+            duration: 0.55,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: el,
+              start: "top 88%"
+            }
+          });
+        });
+      }
+
+      runChat();
+      initFaq();
+      initGsap();
+    </script>
+  </body>
+</html>
